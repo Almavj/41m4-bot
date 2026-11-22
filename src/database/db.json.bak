@@ -1,0 +1,341 @@
+{
+  "users": {
+    "233533416608@s.whatsapp.net": {
+      "jid": "233533416608@s.whatsapp.net",
+      "banned": false,
+      "premium": false,
+      "warnings": 0,
+      "hasOnboarded": false,
+      "createdAt": 1789769209559,
+      "xp": 325,
+      "coins": 50,
+      "level": 1,
+      "streak": 0,
+      "lastDaily": null
+    },
+    "447700900123@s.whatsapp.net": {
+      "jid": "447700900123@s.whatsapp.net",
+      "banned": false,
+      "premium": false,
+      "warnings": 0,
+      "hasOnboarded": false,
+      "createdAt": 1789769230489,
+      "xp": 5,
+      "coins": 0,
+      "level": 0,
+      "streak": 0,
+      "lastDaily": null
+    },
+    "120363012345678901@g.us": {
+      "jid": "120363012345678901@g.us",
+      "banned": false,
+      "premium": false,
+      "warnings": 0,
+      "hasOnboarded": false,
+      "createdAt": 1789772995627,
+      "xp": 10,
+      "coins": 0,
+      "level": 0,
+      "streak": 0,
+      "lastDaily": null
+    },
+    "2348012345678@s.whatsapp.net": {
+      "jid": "2348012345678@s.whatsapp.net",
+      "banned": false,
+      "premium": false,
+      "warnings": 0,
+      "hasOnboarded": false,
+      "createdAt": 1789773114116,
+      "xp": 37,
+      "coins": 0,
+      "level": 0,
+      "streak": 0,
+      "lastDaily": null
+    },
+    "2348888888888@s.whatsapp.net": {
+      "jid": "2348888888888@s.whatsapp.net",
+      "banned": false,
+      "premium": false,
+      "warnings": 0,
+      "hasOnboarded": false,
+      "createdAt": 1789773854011,
+      "xp": 14,
+      "coins": 0,
+      "level": 0,
+      "streak": 0,
+      "lastDaily": null
+    },
+    "2347777777777@s.whatsapp.net": {
+      "jid": "2347777777777@s.whatsapp.net",
+      "banned": false,
+      "premium": false,
+      "warnings": 0,
+      "hasOnboarded": false,
+      "createdAt": 1789774423003,
+      "xp": 8,
+      "coins": 0,
+      "level": 0,
+      "streak": 0,
+      "lastDaily": null
+    },
+    "254708399142@s.whatsapp.net": {
+      "jid": "254708399142@s.whatsapp.net",
+      "banned": false,
+      "premium": false,
+      "warnings": 0,
+      "hasOnboarded": false,
+      "createdAt": 1794293667785,
+      "xp": 0,
+      "coins": 0,
+      "level": 0,
+      "streak": 0,
+      "lastDaily": null
+    },
+    "52996188709055@lid": {
+      "jid": "52996188709055@lid",
+      "banned": false,
+      "premium": false,
+      "warnings": 0,
+      "hasOnboarded": false,
+      "createdAt": 1794293838127,
+      "xp": 13,
+      "coins": 0,
+      "level": 0,
+      "streak": 0,
+      "lastDaily": null
+    },
+    "234991267147886@lid": {
+      "jid": "234991267147886@lid",
+      "banned": false,
+      "premium": false,
+      "warnings": 0,
+      "hasOnboarded": false,
+      "createdAt": 1794294512003,
+      "xp": 15,
+      "coins": 0,
+      "level": 0,
+      "streak": 0,
+      "lastDaily": null
+    },
+    "223785613578326@lid": {
+      "jid": "223785613578326@lid",
+      "banned": false,
+      "premium": false,
+      "warnings": 0,
+      "hasOnboarded": false,
+      "createdAt": 1794294532929,
+      "xp": 9,
+      "coins": 0,
+      "level": 0,
+      "streak": 0,
+      "lastDaily": null
+    },
+    "97260172005393@lid": {
+      "jid": "97260172005393@lid",
+      "banned": false,
+      "premium": false,
+      "warnings": 0,
+      "hasOnboarded": false,
+      "createdAt": 1794294787826,
+      "xp": 9,
+      "coins": 0,
+      "level": 0,
+      "streak": 0,
+      "lastDaily": null
+    },
+    "183155155832954@lid": {
+      "jid": "183155155832954@lid",
+      "banned": false,
+      "premium": false,
+      "warnings": 0,
+      "hasOnboarded": false,
+      "createdAt": 1794296067163,
+      "xp": 6,
+      "coins": 0,
+      "level": 0,
+      "streak": 0,
+      "lastDaily": null
+    },
+    "280672505745474@lid": {
+      "jid": "280672505745474@lid",
+      "banned": false,
+      "premium": false,
+      "warnings": 0,
+      "hasOnboarded": false,
+      "createdAt": 1794296497639,
+      "xp": 20,
+      "coins": 0,
+      "level": 0,
+      "streak": 0,
+      "lastDaily": null
+    },
+    "37744424284225@lid": {
+      "jid": "37744424284225@lid",
+      "banned": false,
+      "premium": false,
+      "warnings": 0,
+      "hasOnboarded": false,
+      "createdAt": 1794296652000,
+      "xp": 15,
+      "coins": 0,
+      "level": 0,
+      "streak": 0,
+      "lastDaily": null
+    },
+    "118103295967379@lid": {
+      "jid": "118103295967379@lid",
+      "banned": false,
+      "premium": false,
+      "warnings": 0,
+      "hasOnboarded": false,
+      "createdAt": 1794297031923,
+      "xp": 8,
+      "coins": 0,
+      "level": 0,
+      "streak": 0,
+      "lastDaily": null
+    },
+    "28042344841345@lid": {
+      "jid": "28042344841345@lid",
+      "banned": false,
+      "premium": false,
+      "warnings": 0,
+      "hasOnboarded": false,
+      "createdAt": 1794297196672,
+      "xp": 14,
+      "coins": 0,
+      "level": 0,
+      "streak": 0,
+      "lastDaily": null
+    },
+    "120847863951401@lid": {
+      "jid": "120847863951401@lid",
+      "banned": false,
+      "premium": false,
+      "warnings": 0,
+      "hasOnboarded": false,
+      "createdAt": 1794297587177,
+      "xp": 7,
+      "coins": 0,
+      "level": 0,
+      "streak": 0,
+      "lastDaily": null
+    }
+  },
+  "groups": {
+    "120363012345678901@g.us": {
+      "jid": "120363012345678901@g.us",
+      "antilink": false,
+      "antitag": false,
+      "mute": false,
+      "warnings": {},
+      "createdAt": 1789773107212,
+      "customCommands": {
+        "ping": {
+          "text": "mine now",
+          "createdBy": "admin",
+          "createdAt": 1789774305905
+        }
+      }
+    },
+    "120363417235115946@g.us": {
+      "jid": "120363417235115946@g.us",
+      "antilink": false,
+      "antitag": false,
+      "mute": false,
+      "warnings": {},
+      "createdAt": 1794293838131
+    },
+    "120363423509666320@g.us": {
+      "jid": "120363423509666320@g.us",
+      "antilink": false,
+      "antitag": false,
+      "mute": false,
+      "warnings": {},
+      "createdAt": 1794294532941
+    },
+    "120363028637907046@g.us": {
+      "jid": "120363028637907046@g.us",
+      "antilink": false,
+      "antitag": false,
+      "mute": false,
+      "warnings": {},
+      "createdAt": 1794295023377
+    },
+    "120363420504986129@g.us": {
+      "jid": "120363420504986129@g.us",
+      "antilink": false,
+      "antitag": false,
+      "mute": false,
+      "warnings": {},
+      "createdAt": 1794296067170
+    },
+    "120363401682006292@g.us": {
+      "jid": "120363401682006292@g.us",
+      "antilink": false,
+      "antitag": false,
+      "mute": false,
+      "warnings": {},
+      "createdAt": 1794297587178
+    }
+  },
+  "settings": {
+    "_migrations": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "menuStyle": 1,
+    "theme": "modern",
+    "footerStyle": "clean",
+    "publicMode": true,
+    "autoRead": true,
+    "pluginStats": {},
+    "connectionStats": {
+      "totalConnections": 0,
+      "disconnects": 0,
+      "lastConnected": null,
+      "lastDisconnected": null,
+      "uptime": 0
+    },
+    "sudoOwners": [],
+    "backupTest2": "before"
+  },
+  "stats": {
+    "commandsUsed": {
+      "backup": 8,
+      "menu": 10,
+      "setchannel": 12,
+      "ping": 6,
+      "meme": 1,
+      "remind": 16,
+      "share": 1,
+      "warns": 4,
+      "wordchain": 12,
+      "del": 5,
+      "delall": 3,
+      "setcmd": 6,
+      "subscribe": 4,
+      "broadcast": 2,
+      "tiktok": 1,
+      "love": 1,
+      "dog": 1,
+      "ai": 1,
+      "sticker": 1,
+      "liststicker": 1
+    }
+  },
+  "reminders": [],
+  "digest": {
+    "subscribers": {
+      "233533416608@s.whatsapp.net": {
+        "lastSentDate": "2026-09-18"
+      }
+    }
+  },
+  "stickerCommands": {}
+}

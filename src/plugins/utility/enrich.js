@@ -1,0 +1,326 @@
+/**
+ * enrich.js — interactive message enricher.
+ *
+ *   .enrich <text>   → single-select picker of rich render styles
+ *
+ * The text is stashed server-side and the user picks a style from a
+ * single_select card; the pick arrives back as `.enrich <style>-<key>` and
+ * the stored text is rendered in that style. Styles:
+ *
+ *   Text formatting          Fancy fonts (src/lib/fancyFonts.js)
+ *   ── ✨ Bold               ── 11 Unicode styles: Bold Serif, Bold Sans,
+ *      🌊 Italic                Serif Italic, Script, Gothic, Double-Struck,
+ *      🔠 Monospace             Tech Mono, Small Caps, Fullwidth, Circled,
+ *      🪄 Strikethrough         Outlined
+ *
+ *   Rich cards
+ *   ── 📇 Contact card (real vcard message)
+ *      💻 Code card (syntax-highlighted)
+ *      📊 Table card (lines → rows, , / | → cols)
+ *      📋 Copy card (tap-to-copy button)
+ *      🔘 Buttons card (action + copy buttons)
+ *      🧵 Quote strip (self-attributed contact quote)
+ *
+ *   Quote styles (cosmetic synthetic quotes — waUtils.js builders)
+ *   ── 📢 Newsletter, 🧾 Order, 🎵 Voice note, 📍 Live location,
+ *      📄 Document, 🖼️ Image, 🎬 GIF, 🛍️ Product, 👥 Group invite,
+ *      💳 Payment — each quotes the user's text with a different
+ *      synthetic message type; the text itself is the body.
+ */
+import {
+  selectMenu,
+  richCodeCard,
+  richTableCard,
+  copyResultCard,
+  mixedCard,
+} from '../../lib/interactiveKit.js';
+import { getDisplayName } from '../../lib/displayName.js';
+import { FANCY_FONTS, toFancy } from '../../lib/fancyFonts.js';
+import {
+  buildFakeOrderQuote,
+  buildFakeAudioQuote,
+  buildFakeLiveLocationQuote,
+  buildFakeDocumentQuote,
+  buildFakeImageQuote,
+  buildFakeGifQuote,
+  buildFakeProductQuote,
+  buildFakeGroupInviteQuote,
+  buildFakePaymentQuote,
+  buildFakeNewsletterQuote,
+} from '../../lib/waUtils.js';
+import { getChannelPill } from '../../lib/menuContext.js';
+
+/* ── Pending-text store ────────────────────────────────────────────────────
+ * Keyed by sender + short random id. Entries expire after 10 minutes; the
+ * map is swept on every touch so it can never grow unbounded. */
+const TTL_MS = 10 * 60 * 1000;
+const pending = new Map();
+
+function sweep() {
+  const now = Date.now();
+  for (const [k, v] of pending) if (now - v.ts > TTL_MS) pending.delete(k);
+}
+function saveText(sender, text) {
+  sweep();
+  const key = Math.random().toString(36).slice(2, 7);
+  pending.set(`${sender}|${key}`, { text, ts: Date.now() });
+  return key;
+}
+function loadText(sender, key) {
+  sweep();
+  // Non-consuming: after a render the text stays available so the user can
+  // pick another style (or "Pick Another Style" on the buttons card reopens
+  // the picker). The TTL sweep is the only cleanup.
+  return pending.get(`${sender}|${key}`)?.text || null;
+}
+
+/* ── Style helpers ─────────────────────────────────────────────────────── */
+
+function detectLanguage(code) {
+  const t = code.trim();
+  if (/^[{[]/.test(t)) { try { JSON.parse(t); return 'json'; } catch { /* not json */ } }
+  if (/^\s*<([a-z!])/i.test(t)) return 'html';
+  if (/\b(def |import |class |elif )\b/.test(t)) return 'python';
+  if (/\b(function|const|let|=>|require\()/.test(t)) return 'javascript';
+  return 'javascript';
+}
+
+function buildVcard(name, number) {
+  const tel = number.startsWith('+') ? number : `+${number}`;
+  return [
+    'BEGIN:VCARD',
+    'VERSION:3.0',
+    `N:;${name};;;`,
+    `FN:${name}`,
+    `item1.TEL;waid=${number.replace(/^\+/, '')}:${tel}`,
+    'item1.X-ABLabel:Enriched by 41MA',
+    'END:VCARD',
+  ].join('\n');
+}
+
+export default {
+  name: 'enrich',
+  aliases: ['stylish'],
+  category: 'utility',
+  description: '✨ Render text as a rich message — pick a style interactively. Usage: .enrich <text>',
+  cooldown: 3000,
+
+  execute: async ({ m, sock, args, prefix }) => {
+    const p = prefix || '.';
+    const first = (args[0] || '').trim();
+
+    /* ── Picker reply: `.enrich <style>-<key>` ── */
+    const pick = first.match(/^(bold|italic|mono|strike|contact|code|table|copy|buttons|quote|redo|serif|sans|italics|script|gothic|double|fmono|smallcaps|fullwidth|circled|outlined|qnewsletter|qorder|qaudio|qlocation|qdocument|qimage|qgif|qproduct|qgroup|qpayment)-([a-z0-9]{4,8})$/);
+    if (pick) {
+      const [, style, key] = pick;
+      const text = loadText(m.sender, key);
+      if (!text) {
+        return await m.reply.info(
+          'That enrichment expired — picks stay fresh for 10 minutes.\n\nRun the command again with your text.',
+          'ENRICH'
+        );
+      }
+      if (style === 'redo') return await showPicker(m, sock, p, text, key);
+      return await render(m, sock, style, text, key, p);
+    }
+
+    /* ── Fresh request: stash text, show the picker ── */
+    const text = args.join(' ').trim();
+    if (!text) {
+      return await m.reply.info(
+        `Turn any text into a rich WhatsApp message.\n\nExample: \`${p}enrich hello world\`\nThen pick a style: bold, italic, monospace, strikethrough, 11 fancy Unicode fonts, contact card, code card, table, copy card, buttons, or a cosmetic quote strip (newsletter, order, voice note, location, document, image, GIF, product, group invite, payment).`,
+        'ENRICH'
+      );
+    }
+    if (text.length > 3500) {
+      return await m.reply.error('Text too long for enrichment (max 3500 characters).');
+    }
+    const key = saveText(m.sender, text);
+    return await showPicker(m, sock, p, text, key);
+  },
+};
+
+/* ── Quote-style registry ──────────────────────────────────────────────────
+ * Each entry turns the user's text into a synthetic `quoted` of a different
+ * message type (the same cosmetic-quote pattern as the contact strip).
+ * The text itself is sent as the body — the quote is pure decoration. */
+const QUOTE_BUILDERS = {
+  qnewsletter: (t) => {
+    // Channel from the configured pill (.setchannel) when present, so the
+    // invite strip always shows the owner's real channel; builder defaults
+    // otherwise. caption carries the user's text onto the invite card.
+    let pill = null;
+    try { pill = getChannelPill()?.forwardedNewsletterMessageInfo; } catch { /* default */ }
+    return buildFakeNewsletterQuote({
+      ...(pill?.newsletterJid ? { newsletterJid: pill.newsletterJid, newsletterName: pill.newsletterName } : {}),
+      caption: t.slice(0, 80),
+    });
+  },
+  qorder:    (t) => buildFakeOrderQuote({ title: t.slice(0, 60), orderTitle: t.slice(0, 40) }),
+  qaudio:    ()  => buildFakeAudioQuote({ ptt: true }),
+  qlocation: (t) => buildFakeLiveLocationQuote({ caption: t.slice(0, 60) }),
+  qdocument: (t) => buildFakeDocumentQuote({ title: t.slice(0, 40), fileName: t.slice(0, 40) }),
+  qimage:    ()  => buildFakeImageQuote({}),
+  qgif:      (t) => buildFakeGifQuote({ caption: t.slice(0, 60) }),
+  qproduct:  (t) => buildFakeProductQuote({ title: t.slice(0, 30), description: t.slice(0, 80) }),
+  qgroup:    (t) => buildFakeGroupInviteQuote({ groupName: t.slice(0, 35), caption: t.slice(0, 60) }),
+  qpayment:  (t) => buildFakePaymentQuote({ note: t.slice(0, 60) }),
+};
+
+/* ── Picker ─────────────────────────────────────────────────────────────── */
+async function showPicker(m, sock, p, text, key) {
+  const preview = text.length > 80 ? text.slice(0, 77) + '…' : text;
+  return await selectMenu(sock, m.from, {
+    text: `Choose a rich style for:\n\n" ${preview} "`,
+    title: '✨ Message Enricher',
+    subtitle: `${text.length} characters`,
+    footer: '✦ 41MA Enrich — picks expire in 10 minutes',
+  }, '🎨 Pick a style', [
+    {
+      title: '📝 Text formatting',
+      rows: [
+        { id: `${p}enrich bold-${key}`,    title: '✨ Bold',          description: 'Bold the whole text' },
+        { id: `${p}enrich italic-${key}`,  title: '🌊 Italic',        description: 'Italic the whole text' },
+        { id: `${p}enrich mono-${key}`,    title: '🔠 Monospace',     description: 'Fixed-width font block' },
+        { id: `${p}enrich strike-${key}`,  title: '🪄 Strikethrough', description: 'Struck-through text' },
+      ],
+    },
+    {
+      title: '🃏 Rich cards',
+      rows: [
+        { id: `${p}enrich contact-${key}`, title: '📇 Contact Card',  description: 'Send it as a real contact' },
+        { id: `${p}enrich code-${key}`,    title: '💻 Code Card',     description: 'Syntax-highlighted code block' },
+        { id: `${p}enrich table-${key}`,   title: '📊 Table Card',    description: 'Lines → rows, commas/pipes → columns' },
+        { id: `${p}enrich copy-${key}`,    title: '📋 Copy Card',    description: 'One-tap copy-to-clipboard button' },
+        { id: `${p}enrich buttons-${key}`, title: '🔘 Buttons Card', description: 'Action buttons + copy button' },
+        { id: `${p}enrich quote-${key}`,   title: '🧵 Quote Strip',   description: 'Sent as a contact-card quote of you' },
+      ],
+    },
+    {
+      title: '🔤 Fancy fonts',
+      rows: FANCY_FONTS.map((font) => ({
+        id:          `${p}enrich ${font.id}-${key}`,
+        title:       `${font.emoji} ${font.label}`,
+        // live preview of the style right in the row description
+        description: toFancy(font.id, 'Hello').slice(0, 30),
+      })),
+    },
+    {
+      title: '🧵 Quote styles',
+      rows: [
+        { id: `${p}enrich qnewsletter-${key}`, title: '📢 Newsletter', description: 'Quote strip as a channel admin invite' },
+        { id: `${p}enrich qorder-${key}`,     title: '🧾 Order',      description: 'Quote strip as a catalog order' },
+        { id: `${p}enrich qaudio-${key}`,     title: '🎵 Voice Note', description: 'Quote strip as a voice note' },
+        { id: `${p}enrich qlocation-${key}`,   title: '📍 Live Location', description: 'Quote strip as a live location card' },
+        { id: `${p}enrich qdocument-${key}`,  title: '📄 Document',   description: 'Quote strip as a document' },
+        { id: `${p}enrich qimage-${key}`,     title: '🖼️ Image',     description: 'Quote strip as a photo' },
+        { id: `${p}enrich qgif-${key}`,       title: '🎬 GIF',        description: 'Quote strip as an animated GIF' },
+        { id: `${p}enrich qproduct-${key}`,   title: '🛍️ Product',    description: 'Quote strip as a catalog product' },
+        { id: `${p}enrich qgroup-${key}`,     title: '👥 Group Invite', description: 'Quote strip as a group invite card' },
+        { id: `${p}enrich qpayment-${key}`,   title: '💳 Payment',    description: 'Quote strip as a payment note' },
+      ],
+    },
+  ], [], { quoted: m });
+}
+
+/* ── Renderers ──────────────────────────────────────────────────────────── */
+async function render(m, sock, style, text, key, p) {
+  // Unicode font styles — plain text, no WA formatting marks needed
+  const font = FANCY_FONTS.find((x) => x.id === style);
+  if (font) return await m.reply(toFancy(style, text));
+
+  // Cosmetic quote strips — body is the text, quote is the decoration
+  const quoteBuilder = QUOTE_BUILDERS[style];
+  if (quoteBuilder) return await m.reply(text, { quoted: quoteBuilder(text) });
+
+  switch (style) {
+    case 'bold':
+      return await m.reply(`*${text}*`);
+
+    case 'italic':
+      return await m.reply(`_${text}_`);
+
+    case 'mono':
+      return await m.reply('```\n' + text + '\n```');
+
+    case 'strike':
+      return await m.reply(`~${text}~`);
+
+    case 'contact': {
+      // First phone-looking token in the text becomes the TEL; the rest is
+      // the contact's display name. No number → the sender's own number.
+      const phoneMatch = text.match(/\+?\d[\d\s\-]{6,}\d/);
+      const phone = (phoneMatch ? phoneMatch[0] : (m.sender || '').split('@')[0]).replace(/[\s\-]/g, '');
+      const name = (phoneMatch ? text.replace(phoneMatch[0], '') : text).trim().slice(0, 60) || 'Enriched Contact';
+      const vcard = buildVcard(name, phone);
+      await sock.sendMessage(m.from, {
+        contacts: { displayName: name, contacts: [{ displayName: name, vcard }] },
+      }, { quoted: m });
+      return;
+    }
+
+    case 'code':
+      return await richCodeCard(sock, m.from, {
+        code: text,
+        language: detectLanguage(text),
+        caption: '💻 Enriched code block',
+        footer: '✦ 41MA Enrich',
+      }, { quoted: m });
+
+    case 'table': {
+      const rows = text
+        .split(/\n|;\s*/)
+        .map((line) => line.trim().split(/\s*[|,]\s*/).map((c) => c.trim()))
+        .filter((r) => r.length && r.some(Boolean));
+      if (!rows.length) return await m.reply.error('Could not build a table from that text.');
+      return await richTableCard(sock, m.from, {
+        title: '📊 Enriched Table',
+        rows,
+        footer: '✦ 41MA Enrich',
+      }, { quoted: m });
+    }
+
+    case 'copy':
+      return await copyResultCard(sock, m.from, {
+        text: 'Your enriched message is ready — tap below to copy it:',
+        copyLabel: '📋 Copy Text',
+        copyValue: text,
+        footer: '✦ 41MA Enrich',
+      }, { quoted: m });
+
+    case 'buttons':
+      return await mixedCard(sock, m.from, {
+        text,
+        title: '✨ Enriched',
+        footer: '✦ 41MA Enrich',
+      }, [
+        { kind: 'action', label: '🎛️ Pick Another Style', cmd: `${p}enrich redo-${key}` },
+        { kind: 'copy',   label: '📋 Copy Text',          value: text },
+      ], { quoted: m });
+
+    case 'quote': {
+      // Send the text as a self-attributed contact-card quote: the vcard
+      // waid is the sender's own number, so their avatar renders on the
+      // strip — like their past self said it. Same proto shape the
+      // aiQuoted strips use (proven on every device).
+      const selfNum = (m.sender || '').split('@')[0];
+      let name = selfNum;
+      try { name = await getDisplayName(sock, m.sender); } catch { /* number fallback */ }
+      name = String(name).slice(0, 60);
+      return await m.reply(text, {
+        quoted: {
+          key: { participant: '0@s.whatsapp.net', remoteJid: 'status@broadcast' },
+          message: {
+            contactMessage: {
+              displayName: `✨ ${name}`,
+              vcard: buildVcard(name, selfNum),
+            },
+          },
+        },
+      });
+    }
+
+    default:
+      return await m.reply.error(`Unknown enrichment style "${style}".`);
+  }
+}

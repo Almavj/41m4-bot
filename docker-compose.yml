@@ -1,0 +1,24 @@
+services:
+  41ma-md:
+    build: .
+    container_name: 41ma-md
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - ./session:/app/session
+      - ./src/database:/app/src/database
+      - 41ma-tmp:/tmp/41ma-media
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:3000/api/health').then(r=>r.ok?process.exit(0):process.exit(1)).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+volumes:
+  41ma-tmp:

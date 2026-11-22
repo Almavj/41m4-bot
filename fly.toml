@@ -1,0 +1,58 @@
+# 41MA-MD on Fly.io — always-on WhatsApp bot
+#
+# Prereqs (one-time, before first deploy):
+#   fly launch --no-deploy        # creates the app, uses this file
+#   fly volumes create 41MA_session --size 1
+#   fly volumes create 41MA_database --size 1
+#   fly secrets set OWNER_NUMBERS=... OWNER_NAME=... PAIRING_ENABLED=true \
+#                 PAIRING_PHONE=... 41MA_RICH_RESPONSE=1
+#   fly deploy
+#
+# NOTE: the bot must never sleep — auto_stop_machines is false.
+#
+# SCALING PAIRED SESSIONS (.pair / /pair web page):
+#   fly.toml defaults to a 512MB shared-cpu-1x machine, which safely hosts
+#   MAX_EXTRA_SESSIONS=5 (each linked session costs ~60-120MB RSS).
+#   To pair more, raise BOTH together, e.g. 10 sessions on a 1GB machine:
+#     [[vm]]
+#       size = "shared-cpu-1x"
+#       memory = 1024
+#     fly secrets set MAX_EXTRA_SESSIONS=10
+#   Watch /api/health (memory.rssMb) as you grow.
+
+app = "nexora-md"
+primary_region = "lhr"
+
+[build]
+
+[env]
+  41MA_MENU_GIF_URL = "https://base44.app/api/apps/6acfd0aaa54519204c9b5698/files/mp/public/6acfd0aaa54519204c9b5698/50442af8d_41MA-menu-loop.mp4"
+  NODE_ENV = "production"
+  PORT = "3000"
+  SESSION_PATH = "/app/data/session"
+  DB_PATH = "/app/data/db.json"
+
+# Single Fly volume (platform limit: 1 volume per machine) — session + db.json inside
+[[mounts]]
+  source = "41MA_data"
+  destination = "/app/data"
+
+# Auth session — lost volume = re-pairing required
+[http_service]
+  internal_port = 3000
+  force_https = true
+  auto_stop_machines = false   # WhatsApp bot must stay connected
+  auto_start_machines = true
+  min_machines_running = 1
+
+  [http_service.concurrency]
+    type = "requests"
+    soft_limit = 50
+    hard_limit = 100
+
+  [[http_service.checks]]
+    interval = "30s"
+    timeout = "5s"
+    grace_period = "15s"
+    method = "GET"
+    path = "/api/health"

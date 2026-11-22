@@ -1,0 +1,57 @@
+/**
+ * math.js — renders LaTeX expressions as native Meta AI math cards.
+ *
+ * Uses baileysBridge.sendRichLatex (GenAILatexUXPrimitive — the .testrich
+ * "v2latex" pattern): the expression is typeset inside the message card,
+ * exactly like a Meta AI math reply. Falls back to a plain monospace
+ * reply when the device can't render rich responses.
+ *
+ * Usage:
+ *   .latex x=\frac{-b\pm\sqrt{b^2-4ac}}{2a}
+ *   .latex \int_0^\infty e^{-x^2}\,dx = \frac{\sqrt{\pi}}{2}
+ *   .latex E=mc^2
+ */
+import capabilities from '../../core/capabilities.js';
+import { baileysBridge } from '../../core/baileysBridge.js';
+
+export default {
+  name: 'latex', // '.math' reserved for the AI step-by-step solver
+  aliases: ['tex'],
+  category: 'utility',
+  description: '📐 Renders LaTeX as a native math card. Usage: .latex <latex expression>',
+  cooldown: 5000,
+
+  execute: async ({ m, sock, args, prefix }) => {
+    const p = prefix || '.';
+    const latex = args.join(' ').trim();
+
+    if (!latex) {
+      return await m.reply.info(
+        `Usage: \`${p}math <latex>\`\n\n` +
+        `Example: \`${p}math x=\\frac{-b\\pm\\sqrt{b^2-4ac}}{2a}\`\n` +
+        `Quadratic formula, integrals, matrices — anything LaTeX can typeset.`,
+        '41MA MATH'
+      );
+    }
+    if (latex.length > 400) {
+      return await m.reply.warn('Expression too long (max 400 characters).');
+    }
+
+    // ── Rich tier: native LaTeX card (sendRichLatex) ────────────────────
+    if (capabilities.richResponse) {
+      try {
+        await baileysBridge.sendRichLatex(sock, m.from, {
+          latex,
+          headerText: '📐 41MA Math',
+          footer: '41MA • Rich LaTeX V2',
+        }, { quoted: m });
+        return;
+      } catch (err) {
+        console.warn('[math] rich latex card failed, text fallback:', err.message);
+      }
+    }
+
+    // Fallback: monospace text
+    await m.reply(`\`\`\`${latex}\`\`\``);
+  },
+};
