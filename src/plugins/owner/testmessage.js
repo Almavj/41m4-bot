@@ -52,7 +52,7 @@ async function runCtaUrl(sock, m) {
     text:   '🌐 *CTA URL TEST*\n\nButtons below open external URLs in the browser.',
     footer: 'cta_url: { text, url }',
   }, [
-    { kind: 'url', label: 'GitHub (Fork)',  url: 'https://github.com/boyde1317-byte/NEXORA-MD' },
+    { kind: 'url', label: 'GitHub (Fork)',  url: 'https://github.com/Almavj/41m4-bot' },
   ], { quoted: m });
   return 'cta_url ✓';
 }
@@ -63,7 +63,7 @@ async function runCtaCopy(sock, m) {
     footer:     'cta_copy: { text, copy }',
     copyLabel:  'Copy Sample Code',
     copyValue:  'const bot = require("41ma-md"); bot.start();',
-    extraButtons: [{ text: 'Another Copy', copy: 'git clone https://github.com/boyde1317-byte/NEXORA-MD' }],
+    extraButtons: [{ text: 'Another Copy', copy: 'git clone https://github.com/Almavj/41m4-bot' }],
   }, { quoted: m });
   return 'cta_copy ✓';
 }

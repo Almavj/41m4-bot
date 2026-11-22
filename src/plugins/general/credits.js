@@ -43,7 +43,7 @@ export default {
       caption:        `${brand.tagline || brand.description || 'Made with \u2665\uFE0F By ' + brand.creator}`,
       adTitle:        brand.name,
       adBody:         brand.tagline || `By ${brand.creator}`,
-      sourceUrl:      'https://github.com/boyde1317-byte/NEXORA-MD',
+      sourceUrl:      'https://github.com/Almavj/41m4-bot',
     });
 
     const buttons = [

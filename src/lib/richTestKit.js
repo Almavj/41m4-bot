@@ -322,15 +322,15 @@ export async function testV1Link(sock, jid, quoted) {
   const generated = generateLinkContent(
     '41MA-MD uses a custom Baileys fork with rich message support. The fork extends the Baileys reference with OURIN-baileys generators for tables, code blocks, and LaTeX.',
     [
-      { url: 'https://github.com/boyde1317-byte/baileys', displayName: 'Baileys Fork' },
-      { url: 'https://github.com/boyde1317-byte/NEXORA-MD', displayName: '41MA-MD' },
+      { url: 'https://github.com/Almavj/41m4-bot', displayName: 'Baileys Fork' },
+      { url: 'https://github.com/Almavj/41m4-bot', displayName: '41MA-MD' },
     ],
     quoted,
     {
       footer: '41MA-MD • link content with citations',
       citations: [
         { sourceTitle: 'GitHub — boyde1317-byte/baileys', sourceQuery: 'baileys fork rich messages', citationNumber: 1 },
-        { sourceTitle: 'GitHub — boyde1317-byte/41MA-MD', sourceQuery: '41MA MD bot', citationNumber: 2 },
+        { sourceTitle: 'GitHub — Almavj/41m4-bot', sourceQuery: '41MA MD bot', citationNumber: 2 },
       ],
     },
   );
@@ -346,13 +346,13 @@ export async function testV2Link(sock, jid, quoted) {
     '41MA-MD is a next-gen WhatsApp bot built on a custom Baileys fork. It supports nativeFlow interactive messages, carousels, sticker packs, and rich response messages.',
     [
       {
-        url: 'https://github.com/boyde1317-byte/NEXORA-MD',
+        url: 'https://github.com/Almavj/41m4-bot',
         displayName: '41MA-MD on GitHub',
         sourceDisplayName: 'GitHub',
-        sourceSubtitle: 'boyde1317-byte/41MA-MD',
+        sourceSubtitle: 'Almavj/41m4-bot',
       },
       {
-        url: 'https://github.com/boyde1317-byte/baileys',
+        url: 'https://github.com/Almavj/41m4-bot',
         displayName: 'Baileys Fork on GitHub',
         sourceDisplayName: 'GitHub',
         sourceSubtitle: 'boyde1317-byte/baileys',
@@ -623,7 +623,7 @@ export async function testInlineImageWithTable(sock, jid, quoted) {
         },
         imageText: '41MA-MD Test Image',
         alignment: 0,
-        tapLinkUrl: 'https://github.com/boyde1317-byte/NEXORA-MD',
+        tapLinkUrl: 'https://github.com/Almavj/41m4-bot',
       },
       tableHeaders: [ 'Property', 'Value' ],
       tableRows: [
@@ -787,7 +787,7 @@ export async function testV2InlineImageWithTable(sock, jid, quoted) {
         },
         imageText: 'V2 Image Preview',
         alignment: 0,
-        tapLinkUrl: 'https://github.com/boyde1317-byte/NEXORA-MD',
+        tapLinkUrl: 'https://github.com/Almavj/41m4-bot',
       },
       tableHeaders: ['Property', 'Value'],
       tableRows: [
@@ -1291,7 +1291,7 @@ export async function testMoonsonPingCombo(sock, jid, quoted) {
       brand:      'System Monitor',
       price:      apiLatency + ' ms',
       sale_price: 'Excellent',
-      product_url: 'https://github.com/boyde1317-byte/NEXORA-MD',
+      product_url: 'https://github.com/Almavj/41m4-bot',
       image_url:  thumb,
       icon_url:   thumb,
     })

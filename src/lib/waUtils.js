@@ -762,7 +762,7 @@ export async function replyFakeQuote(m, sock, text, fakeText = '\u200e', opts = 
  *   title: '41MA-MD',
  *   body:  'The next-gen WhatsApp bot',
  *   thumbnailUrl: 'https://example.com/logo.jpg',
- *   sourceUrl:    'https://github.com/Boyde1317-byte/41MA-MD',
+ *   sourceUrl:    'https://github.com/Almavj/41m4-bot',
  * }, { quoted: m })
  */
 /**

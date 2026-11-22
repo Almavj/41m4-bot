@@ -1,25 +1,7 @@
-<div align="center">
-
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0:141E30,100:25D366&height=180&text=41MA%20MD&fontSize=52&fontAlignY=36&animation=twinkling" width="100%" alt="41MA MD"/>
-
-<a href="https://readme-typing-svg.herokuapp.com">
-  <img src="https://readme-typing-svg.herokuapp.com?lines=Rich-native+WhatsApp+bot+platform;By+Aizen+%E2%80%A2+v2.0.0&font=Fira+Code&color=25D366FF&height=55&width=520&center=true&vCenter=true&size=22" alt="Typing SVG"/>
-</a>
-
-[![Node.js](https://img.shields.io/badge/Node.js-20%2B-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org)
-[![Baileys](https://img.shields.io/badge/Baileys-v0.3.18--r6-FF6B35?style=for-the-badge)](https://github.com/boyde1317-byte/baileys)
-[![Commands](https://img.shields.io/badge/Commands-181+-purple?style=for-the-badge)](#-command-reference)
-[![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)](LICENSE)
-
-</div>
-
----
-
 ## ✨ What is 41MA MD?
 
 **41MA MD** is a production WhatsApp multi-device bot platform — **181 commands** across 15 categories, with a rich-message engine that makes the bot *feel native*: tappable pickers, copy-code buttons, interactive approval cards, image headers, voice synthesis, and full-text fallbacks everywhere.
 
-Built on a **pinned private Baileys fork** ([`boyde1317-byte/baileys#v0.3.18-r6`](https://github.com/boyde1317-byte/baileys)) with device-verified rich-message generators. Every rich surface ships with a plain-text fallback, so nothing breaks when WhatsApp changes things underneath you.
 
 ---
 
@@ -359,21 +341,10 @@ Commands work with any configured prefix (`.` is the default). **181 commands** 
 - **Node.js 20+** and **npm 8+**
 - A **WhatsApp account** to link as the bot number
 
-### Clone & Install
-
-```bash
-git clone https://github.com/boyde1317-byte/NEXORA-MD.git
-cd 41MA-MD
 npm install
 ```
 
-### Configure
 
-```bash
-cp .env.example .env
-```
-
-The essentials in `.env`:
 
 ```env
 # Your phone number(s) — comma-separated, country code, no + or spaces
@@ -564,29 +535,6 @@ Then `.reload greet` (owner command) loads it live without a restart. `.reload` 
 - `.eval` is owner-only and sandboxed; ban/warn/mute are permission-gated
 - Session files in `./session/` are the bot's identity — never commit them
 
----
-
-## 📦 Key Dependencies
-
-| Package | Why |
-|---------|-----|
-| `baileys` (pinned fork `#v0.3.18-r6`) | WhatsApp multi-device socket + rich message generators (keyless git install via Dockerfile `insteadOf`) |
-| NIXCODE rich-message builder | Native cards, buttons, carousels (vendored `src/lib/NIXCODE.js`, attribution preserved) |
-| `qrcode-terminal` | Headless pairing |
-| `sharp` | Image processing for thumbnails and stickers |
-
----
-
-## 📬 Connect with the Developer
-
-<div align="center">
-
-**Aizen** — Creator & Lead Developer of 41MA MD
-
-| Platform | Link |
-|----------|------|
-| ✈️ Telegram | [@DeathCore_Xr](https://t.me/DeathCore_Xr) |
-
 > Star ⭐ the repo if you find it useful.
 
 </div>
@@ -594,8 +542,6 @@ Then `.reload greet` (owner command) loads it live without a restart. `.reload` 
 ---
 
 <div align="center">
-
-**© 41MA MD — By Aizen**
 
 *Use responsibly. This project is not affiliated with or endorsed by WhatsApp Inc.*
 

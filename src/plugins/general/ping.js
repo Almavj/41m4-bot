@@ -58,7 +58,7 @@ export default {
             brand: 'System Monitor',
             price: apiLatency + ' ms',
             sale_price: latency < 400 ? 'Excellent' : 'Degraded',
-            product_url: 'https://github.com/boyde1317-byte/NEXORA-MD',
+            product_url: 'https://github.com/Almavj/41m4-bot',
             image_url: thumb,
             icon_url: thumb,
           })
